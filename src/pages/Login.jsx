@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { Container, Form, Button, Card, Row, Col } from "react-bootstrap";
+import axios from "axios";
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -11,18 +12,20 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("/users.json");
-    const users = await res.json();
-    const matched = users.find(
-      (u) => u.email === email && u.password === password
-    );
+    try {
+      const response = await axios.post("http://localhost:8080/api/auth/login", {
+        email,
+        password,
+      });
 
-    if (matched) {
-      login(matched);
-      localStorage.setItem("user", JSON.stringify(matched));
-      if (matched.role === "CUSTOMER") navigate("/customer");
-      else if (matched.role === "AGENT") navigate("/agent");
-    } else {
+      const user = response.data;
+      login(user); // optional if you're using context
+      localStorage.setItem("user", JSON.stringify(user));
+
+      if (user.role === "CUSTOMER") navigate("/customer");
+      else if (user.role === "AGENT") navigate("/agent");
+    } catch (err) {
+      console.error(err);
       alert("Invalid email or password");
     }
   };

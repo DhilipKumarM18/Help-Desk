@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Card, Row, Col } from "react-bootstrap";
+import axios from "axios";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -15,10 +16,16 @@ const Register = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Registration is mock only — login with test credentials.");
-    navigate("/login");
+    try {
+      const response = await axios.post("http://localhost:8080/api/auth/register", form);
+      alert("Registration successful. Please login.");
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+      alert("Registration failed. Try again.");
+    }
   };
 
   return (
@@ -64,11 +71,7 @@ const Register = () => {
 
                 <Form.Group className="mb-4">
                   <Form.Label>Role</Form.Label>
-                  <Form.Select
-                    name="role"
-                    onChange={handleChange}
-                    required
-                  >
+                  <Form.Select name="role" onChange={handleChange} required>
                     <option value="CUSTOMER">Customer</option>
                     <option value="AGENT">Agent</option>
                   </Form.Select>
