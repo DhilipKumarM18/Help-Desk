@@ -52,7 +52,7 @@ const Register = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label>Password</Form.Label>
+                  <Form.Label>Passsword</Form.Label>
                   <Form.Control
                     type="password"
                     placeholder="Password"
