@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.helpdesk.backend.DTOS.LoginRequest;
 import com.helpdesk.backend.DTOS.RegisterRequest;
 import com.helpdesk.backend.Entities.User;
 import com.helpdesk.backend.Entities.User.Role;
@@ -40,6 +41,20 @@ public class UserService {
         userRepository.save(user);
         //return success message:
         return "User registered successfully";
+  }
+
+    public User login(LoginRequest request) {
+    User user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    // Check password
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        throw new RuntimeException("Invalid password");
+    }
+
+    return user;
 }
+
+
     
 }

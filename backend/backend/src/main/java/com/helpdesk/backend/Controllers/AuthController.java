@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.helpdesk.backend.DTOS.LoginRequest;
 import com.helpdesk.backend.DTOS.RegisterRequest;
+import com.helpdesk.backend.Entities.User;
 import com.helpdesk.backend.Services.UserService;
 
 @RestController
@@ -18,9 +20,17 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request) {
         String message = userService.registerUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        User user = userService.login(request);
+        return ResponseEntity.ok(user);  // you can return JWT later if needed
+    }
+
 }
