@@ -31,7 +31,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // public endpoints
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/tickets/**").hasAnyRole("CUSTOMER", "AGENT")
+                        .requestMatchers("/api/admin/**").hasRole("AGENT") // for agent-only access
                         .anyRequest().authenticated() // everything else needs auth
                 )
                 .sessionManagement(sess -> sess

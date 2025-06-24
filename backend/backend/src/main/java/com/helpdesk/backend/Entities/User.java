@@ -98,6 +98,10 @@ public class User implements UserDetails {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public void setCreatedTickets(List<Ticket>l) {
+		this.createdTickets=l;
+	}
 
 //	public String getPassword() {
 //		return password;
@@ -105,6 +109,10 @@ public class User implements UserDetails {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public void setAssignedTickets(List<Ticket> assignedTickets) {
+		this.assignedTickets = assignedTickets;
 	}
 
 	public Role getRole() {
