@@ -11,24 +11,28 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", {
-        email,
-        password,
-      });
+  e.preventDefault();
+  try {
+    const response = await axios.post("http://localhost:8080/api/auth/login", {
+      email,
+      password,
+    });
 
-      const user = response.data;
-      login(user); // optional if you're using context
-      localStorage.setItem("user", JSON.stringify(user));
+    const user = response.data;
+    login(user); // optional if you're using context
+    localStorage.setItem("user", JSON.stringify(user));
 
-      if (user.role === "CUSTOMER") navigate("/customer");
-      else if (user.role === "AGENT") navigate("/agent");
-    } catch (err) {
-      console.error(err);
-      alert("Invalid email or password");
+    if (email === "admin@gmail.com" && password === "admin") {
+      navigate("/agent");
+    } else {
+      navigate("/customer");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Invalid email or password");
+  }
+};
+
 
   return (
     <Container className="d-flex justify-content-center align-items-center min-vh-100">

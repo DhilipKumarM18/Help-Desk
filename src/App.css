@@ -40,3 +40,18 @@
 .read-the-docs {
   color: #888;
 }
+/* Light and Dark Themes */
+.light-theme {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.dark-theme {
+  background-color: #121212;
+  color: #f1f1f1;
+}
+
+.dark-theme .card {
+  background-color: #1e1e1e;
+  color: white;
+}

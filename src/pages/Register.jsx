@@ -69,13 +69,13 @@ const Register = () => {
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-4">
+                {/* <Form.Group className="mb-4">
                   <Form.Label>Role</Form.Label>
                   <Form.Select name="role" onChange={handleChange} required>
                     <option value="CUSTOMER">Customer</option>
                     <option value="AGENT">Agent</option>
                   </Form.Select>
-                </Form.Group>
+                </Form.Group> */}
 
                 <div className="d-grid gap-2">
                   <Button variant="success" type="submit">Register</Button>
