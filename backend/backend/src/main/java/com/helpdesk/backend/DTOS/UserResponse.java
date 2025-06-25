@@ -1,7 +1,7 @@
 package com.helpdesk.backend.DTOS;
 
 import com.helpdesk.backend.Entities.User;
-
+ 
 public class UserResponse extends User{
 
 	
