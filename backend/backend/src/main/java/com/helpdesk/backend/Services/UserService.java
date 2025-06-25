@@ -1,67 +1,54 @@
 package com.helpdesk.backend.Services;
 
+import com.helpdesk.backend.DTOS.RegisterRequest;
+import com.helpdesk.backend.Entities.User;
+import com.helpdesk.backend.Repositories.UserRepository;
+import com.helpdesk.backend.Security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.helpdesk.backend.DTOS.LoginRequest;
-import com.helpdesk.backend.DTOS.RegisterRequest;
-import com.helpdesk.backend.Entities.User;
-import com.helpdesk.backend.Entities.User.Role;
-import com.helpdesk.backend.Repositories.UserRepository;
+import java.util.Optional;
 
 @Service
 public class UserService {
-
-	
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
+    private JwtService jwtService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-  
+    // 🔹 Register user
     public String registerUser(RegisterRequest request) {
-    	
-    	//first check if already exist:
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+        Optional<User> existing = userRepository.findByEmail(request.getEmail());
+        if (existing.isPresent()) {
+            throw new RuntimeException("Email already registered.");
         }
-        
-        
-        //not found : create a new user:
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.CUSTOMER);
 
-        //save it in DB:
-        userRepository.save(user);
-        //return success message:
+        User newUser = new User(
+            request.getName(),
+            request.getEmail(),
+            passwordEncoder.encode(request.getPassword()),
+            User.Role.CUSTOMER
+        );
+
+        userRepository.save(newUser);
         return "User registered successfully";
-  }
-
-    public User login(LoginRequest request) {
-    User user = userRepository.findByEmail(request.getEmail())
-            .orElseThrow(() -> new RuntimeException("User not found"));
-
-    // Check password
-    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-        throw new RuntimeException("Invalid password");
     }
 
-    return user;
-}
-
-
-    
-    
-    //finding the user through email:
+    // 🔹 Get user by email
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+            .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
-    
+
+    // 🔹 Extract email from JWT token
+    public String extractUsernameFromToken(String token) {
+        return jwtService.extractUsername(token);
+    }
+
 }

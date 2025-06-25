@@ -1,7 +1,4 @@
 package com.helpdesk.backend.Security;
-
-
-
 import com.helpdesk.backend.Entities.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -9,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date; 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +21,7 @@ public class JwtService {
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole().name()); // Add custom claims if needed
+        claims.put("role", "ROLE_" + user.getRole().name());  // ✅ FIXED
 
         return Jwts.builder()
                 .setClaims(claims)
