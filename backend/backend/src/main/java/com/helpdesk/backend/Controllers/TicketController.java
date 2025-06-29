@@ -1,9 +1,11 @@
 package com.helpdesk.backend.Controllers;
 
 import java.net.ResponseCache;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.helpdesk.backend.DTOS.CreateTicketRequest;
@@ -20,6 +23,8 @@ import com.helpdesk.backend.DTOS.CreatedTicketResponse;
 import com.helpdesk.backend.DTOS.MyTicketsResponse;
 import com.helpdesk.backend.DTOS.UpdateTicketRequest;
 import com.helpdesk.backend.Entities.Ticket;
+import com.helpdesk.backend.Entities.Ticket.Priority;
+import com.helpdesk.backend.Entities.Ticket.Status;
 import com.helpdesk.backend.Entities.User;
 import com.helpdesk.backend.Security.JwtService;
 import com.helpdesk.backend.Services.TicketService;
@@ -137,7 +142,20 @@ public class TicketController {
     	return "Deleted successfully...";
     }
 	
-	
+	//api-endpoint 7: agent can filter the tickets:
+    @GetMapping("/filter")
+    @PreAuthorize("hasRole('AGENT')")
+    public ResponseEntity<List<CreatedTicketResponse>> filterTickets(
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) Priority priority,
+            @RequestParam(required = false) Long assignedTo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        List<CreatedTicketResponse> filtered = ticketService.filterTickets(status, priority, assignedTo, startDate, endDate);
+        return ResponseEntity.ok(filtered);
+    }
+
 	
 	
 	

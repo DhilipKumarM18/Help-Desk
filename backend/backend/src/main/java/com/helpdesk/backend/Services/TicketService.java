@@ -1,6 +1,7 @@
 package com.helpdesk.backend.Services;
 
 import java.net.Authenticator.RequestorType;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.helpdesk.backend.DTOS.CreateTicketRequest;
+import com.helpdesk.backend.DTOS.CreatedTicketResponse;
 import com.helpdesk.backend.DTOS.MyTicketsResponse;
 import com.helpdesk.backend.DTOS.UpdateTicketRequest;
 import com.helpdesk.backend.Entities.Ticket;
@@ -122,4 +124,21 @@ public class TicketService {
 		
 		ticketRepository.deleteById(id);
 	}
+	
+	//filter the tickets:
+	public List<CreatedTicketResponse> filterTickets(Status status,
+            Priority priority,
+            Long assignedTo,
+            LocalDate startDate,
+            LocalDate endDate) {
+LocalDateTime from = (startDate != null) ? startDate.atStartOfDay() : null;
+LocalDateTime to = (endDate != null) ? endDate.atTime(23, 59, 59) : null;
+
+List<Ticket> tickets = ticketRepository.filterTickets(status, priority, assignedTo, from, to);
+
+return tickets.stream()
+.map(t -> new CreatedTicketResponse(t))
+.toList();
+}
+
 }
