@@ -1,14 +1,21 @@
 package com.helpdesk.backend.Services;
 
-import com.helpdesk.backend.DTOS.TicketRequest;
-import com.helpdesk.backend.Entities.Ticket;
-import com.helpdesk.backend.Entities.User;
-import com.helpdesk.backend.Repositories.TicketRepository;
-import com.helpdesk.backend.Repositories.UserRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.helpdesk.backend.DTOS.CreateTicketRequest;
+import com.helpdesk.backend.DTOS.MyTicketsResponse;
+import com.helpdesk.backend.DTOS.UpdateTicketRequest;
+import com.helpdesk.backend.Entities.Ticket;
+import com.helpdesk.backend.Entities.Ticket.Priority;
+import com.helpdesk.backend.Entities.Ticket.Status;
+import com.helpdesk.backend.Entities.User;
+import com.helpdesk.backend.Entities.User.Role;
+import com.helpdesk.backend.Repositories.TicketRepository;
+import com.helpdesk.backend.Repositories.UserRepository;
 
 @Service
 public class TicketService {
@@ -19,41 +26,84 @@ public class TicketService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Ticket> getAllTickets() {
-        return ticketRepository.findAll();
-    }
-
-    public Ticket createTicket(TicketRequest request, String customerEmail) {
-        User user = userRepository.findByEmail(customerEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+    // ✅ Create a new ticket
+    public Ticket createTicket(CreateTicketRequest request, User customer) {
         Ticket ticket = new Ticket();
         ticket.setTitle(request.getTitle());
         ticket.setDescription(request.getDescription());
-        ticket.setPriority(request.getPriority());
-        ticket.setStatus(Ticket.Status.OPEN);
-        ticket.setCreatedBy(user);
+        ticket.setPriority(Priority.valueOf(request.getPriority().toUpperCase()));
+        ticket.setStatus(Status.OPEN);
+        ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setCreatedBy(customer);
 
         return ticketRepository.save(ticket);
     }
 
-    public void assignTicket(Long ticketId, String agentEmail) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+    // ✅ Fetch all tickets created by a specific customer
+    public List<MyTicketsResponse> getTicketsByCustomer(User customer) {
+        List<Ticket> tickets = ticketRepository.findByCreatedBy(customer);
 
-        User agent = userRepository.findByEmail(agentEmail)
-                .orElseThrow(() -> new RuntimeException("Agent not found"));
-
-        ticket.setAssignedTo(agent);
-        ticket.setStatus(Ticket.Status.ASSIGNED);
-        ticketRepository.save(ticket);
+        return tickets.stream().map(ticket ->
+            new MyTicketsResponse(
+                ticket.getId(),
+                ticket.getTitle(),
+                ticket.getDescription(),
+                ticket.getPriority(),
+                ticket.getStatus(),
+                ticket.getCreatedAt()
+            )
+        ).toList();
     }
 
-    public void closeTicket(Long ticketId) {
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+    // ✅ Fetch all tickets (for agents)
+    public List<MyTicketsResponse> getAllTickets() {
+        List<Ticket> tickets = ticketRepository.findAll();
 
-        ticket.setStatus(Ticket.Status.CLOSED);
-        ticketRepository.save(ticket);
+        return tickets.stream().map(ticket ->
+            new MyTicketsResponse(
+                ticket.getId(),
+                ticket.getTitle(),
+                ticket.getDescription(),
+                ticket.getPriority(),
+                ticket.getStatus(),
+                ticket.getCreatedAt()
+            )
+        ).toList();
+    }
+
+    // ✅ Fetch a ticket by ID
+    public Ticket getTicketById(Long id) {
+        return ticketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket not found with id: " + id));
+    }
+
+    // ✅ Update a ticket (status, priority, assigned agent)
+    public Ticket updateTicket(Long id, UpdateTicketRequest request) {
+        Ticket ticket = getTicketById(id);
+
+        if (request.getStatus() != null)
+            ticket.setStatus(request.getStatus());
+
+        if (request.getPriority() != null)
+            ticket.setPriority(request.getPriority());
+
+        if (request.getAssignedTo() != null) {
+            User agent = userRepository.findById(request.getAssignedTo())
+                    .orElseThrow(() -> new RuntimeException("Assigned agent not found"));
+
+            if (agent.getRole() == Role.CUSTOMER) {
+                throw new RuntimeException("Customer cannot be assigned to a ticket");
+            }
+
+            ticket.setAssignedTo(agent);
+        }
+
+        return ticketRepository.save(ticket);
+    }
+
+    // ✅ Delete a ticket
+    public void deleteTicket(Long id) {
+        Ticket exist = getTicketById(id);
+        ticketRepository.deleteById(id);
     }
 }

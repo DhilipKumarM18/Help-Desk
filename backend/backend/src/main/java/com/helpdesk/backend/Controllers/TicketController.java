@@ -1,14 +1,22 @@
 package com.helpdesk.backend.Controllers;
 
+import com.helpdesk.backend.DTOS.CreateTicketRequest;
+import com.helpdesk.backend.DTOS.CreatedTicketResponse;
+import com.helpdesk.backend.DTOS.MyTicketsResponse;
+import com.helpdesk.backend.DTOS.UpdateTicketRequest;
 import com.helpdesk.backend.Entities.Ticket;
-import com.helpdesk.backend.DTOS.TicketRequest;
+import com.helpdesk.backend.Entities.User;
+import com.helpdesk.backend.Security.JwtService;
 import com.helpdesk.backend.Services.TicketService;
 import com.helpdesk.backend.Services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -16,38 +24,79 @@ import java.util.List;
 public class TicketController {
 
     @Autowired
-    private TicketService ticketService;
+    private JwtService jwtService;
 
     @Autowired
     private UserService userService;
 
-    // ✅ 1. Fetch all tickets
-    @GetMapping
-    public ResponseEntity<List<Ticket>> getAllTickets() {
+    @Autowired
+    private TicketService ticketService;
+
+    // 1️⃣ Create Ticket (CUSTOMER only)
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<CreatedTicketResponse> createTicket(@RequestBody CreateTicketRequest request, HttpServletRequest httpRequest) {
+        String token = httpRequest.getHeader("Authorization").substring(7);
+        String email = jwtService.extractUsername(token);
+        User customer = userService.getUserByEmail(email);
+
+        Ticket createdTicket = ticketService.createTicket(request, customer);
+        CreatedTicketResponse response = new CreatedTicketResponse(createdTicket, customer);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 2️⃣ Get Tickets created by current CUSTOMER
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<List<MyTicketsResponse>> getMyTickets(HttpServletRequest httpRequest) {
+        String token = httpRequest.getHeader("Authorization").substring(7);
+        String email = jwtService.extractUsername(token);
+        User customer = userService.getUserByEmail(email);
+
+        return ResponseEntity.ok(ticketService.getTicketsByCustomer(customer));
+    }
+
+    // 3️⃣ Get all tickets (AGENT only)
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('AGENT')")
+    public ResponseEntity<List<MyTicketsResponse>> getAllTickets() {
         return ResponseEntity.ok(ticketService.getAllTickets());
     }
 
-    // ✅ 2. Create ticket (fixes 403)
-    @PostMapping
-    public ResponseEntity<Ticket> createTicket(@RequestBody TicketRequest request, HttpServletRequest httpRequest) {
+    // 4️⃣ Update ticket (AGENT only)
+    @PutMapping("/{id}/update")
+    @PreAuthorize("hasRole('AGENT')")
+    public ResponseEntity<CreatedTicketResponse> updateTicket(@PathVariable Long id,
+                                                              @RequestBody UpdateTicketRequest request) {
+        Ticket updated = ticketService.updateTicket(id, request);
+        CreatedTicketResponse response = new CreatedTicketResponse(updated);
+        return ResponseEntity.ok(response);
+    }
+
+    // 5️⃣ Get ticket by ID (CUSTOMER sees their own, AGENT sees all)
+    @GetMapping("/{id}")
+    public ResponseEntity<CreatedTicketResponse> getTicketById(@PathVariable Long id, HttpServletRequest httpRequest) {
+        Ticket ticket = ticketService.getTicketById(id);
+
         String token = httpRequest.getHeader("Authorization").substring(7);
-        Ticket created = ticketService.createTicket(request, token);
-        return ResponseEntity.ok(created);
+        String email = jwtService.extractUsername(token);
+        User user = userService.getUserByEmail(email);
+
+        if (!user.getRole().name().equals("AGENT") &&
+            !ticket.getCreatedBy().getId().equals(user.getId())) {
+            return ResponseEntity.status(403).build();
+        }
+
+        CreatedTicketResponse response = new CreatedTicketResponse(ticket);
+        return ResponseEntity.ok(response);
     }
 
-    // ✅ 3. Assign ticket to agent
-    @PutMapping("/{id}/assign")
-    public ResponseEntity<String> assignTicket(@PathVariable Long id, HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-        String agentEmail = userService.extractUsernameFromToken(token);
-        ticketService.assignTicket(id, agentEmail);
-        return ResponseEntity.ok("Ticket assigned to agent");
-    }
-
-    // ✅ 4. Close ticket
-    @PutMapping("/{id}/close")
-    public ResponseEntity<String> closeTicket(@PathVariable Long id) {
-        ticketService.closeTicket(id);
-        return ResponseEntity.ok("Ticket closed");
+    // 6️⃣ Delete ticket (AGENT only)
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('AGENT')")
+    public String deleteTicketById(@PathVariable Long id) {
+        ticketService.deleteTicket(id);
+        return "Deleted successfully...";
     }
 }

@@ -22,18 +22,26 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // 🔹 Register user
+    // 🔹 Register user with dynamic role assignment
     public String registerUser(RegisterRequest request) {
         Optional<User> existing = userRepository.findByEmail(request.getEmail());
         if (existing.isPresent()) {
             throw new RuntimeException("Email already registered.");
         }
 
+        // Parse role string to enum (default to CUSTOMER if null/invalid)
+        User.Role role;
+        try {
+            role = User.Role.valueOf(request.getRole().toUpperCase());
+        } catch (Exception e) {
+            role = User.Role.CUSTOMER; // fallback
+        }
+
         User newUser = new User(
             request.getName(),
             request.getEmail(),
             passwordEncoder.encode(request.getPassword()),
-            User.Role.CUSTOMER
+            role
         );
 
         userRepository.save(newUser);
@@ -50,5 +58,4 @@ public class UserService {
     public String extractUsernameFromToken(String token) {
         return jwtService.extractUsername(token);
     }
-
 }

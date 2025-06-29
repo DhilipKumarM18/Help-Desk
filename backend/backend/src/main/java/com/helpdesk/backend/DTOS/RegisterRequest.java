@@ -1,22 +1,20 @@
 package com.helpdesk.backend.DTOS;
 
-
-
 public class RegisterRequest {
     private String name;
     private String email;
     private String password;
+    private String role;  // ✅ Default value
 
-    // Constructors:
     public RegisterRequest() {}
 
-    public RegisterRequest(String name, String email, String password) {
+    public RegisterRequest(String name, String email, String password, String role) {
         this.name = name;
-        this.email = email; 
+        this.email = email;
         this.password = password;
+        this.role = (role != null) ? role : "AGENT";
     }
 
-    // Getters & Setters:
     public String getName() {
         return name;
     }
@@ -39,5 +37,13 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

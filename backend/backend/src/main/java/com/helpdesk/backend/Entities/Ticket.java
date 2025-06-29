@@ -12,7 +12,7 @@ public class Ticket {
     public enum Status {
         OPEN,
         IN_PROGRESS,
-        ASSIGNED,  // ✅ Added missing enum value
+        ASSIGNED,
         RESOLVED,
         CLOSED
     }
@@ -55,16 +55,20 @@ public class Ticket {
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    // Constructors
+    // ✅ Default constructor
     public Ticket() {}
 
+    // ✅ Constructor used when creating a ticket
     public Ticket(String title, String description, User createdBy) {
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
+        this.status = Status.OPEN;
+        this.priority = Priority.MEDIUM;
+        this.createdAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
+    // ✅ Getters and Setters
     public Long getId() {
         return id;
     }
@@ -119,6 +123,10 @@ public class Ticket {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public List<Comment> getComments() {
