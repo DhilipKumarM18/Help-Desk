@@ -19,12 +19,13 @@ const Login = () => {
     });
 
     const user = response.data;
-    login(user); // optional if you're using context
+    login(user);
     localStorage.setItem("user", JSON.stringify(user));
-
-    if (email === "admin@gmail.com" && password === "admin") {
+    console.log("Logged-in user:", user);
+        console.log(atob(user.token.split('.')[1]))
+    if (user.role == 'AGENT') {
       navigate("/agent");
-    } else {
+    } else if(user.role == 'CUSTOMER') {
       navigate("/customer");
     }
   } catch (err) {
@@ -69,10 +70,15 @@ const Login = () => {
                 </div>
 
                 <p className="text-center mt-3">
-                  Don't have an account? <a href="/register">Register</a>
+                  Don't have an account? <a href="/register" style={{textDecoration:'none'}}>Register</a>
                 </p>
               </Form>
             </Card.Body>
+            <center>
+            <Card.Footer>
+              <h6>Agent Registration : <a href="/ad_register" style={{textDecoration:'none'}}>Admin_Register</a> </h6>
+            </Card.Footer>
+            </center>
           </Card>
         </Col>
       </Row>

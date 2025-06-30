@@ -1,57 +1,64 @@
-import { Form, Card } from "react-bootstrap";
+import React from "react";
+import { Card, Form } from "react-bootstrap";
 
 const statuses = ["ALL", "OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
 const priorities = ["ALL", "HIGH", "MEDIUM", "LOW"];
+const assignedOptions = ["ALL", "ASSIGNED", "UNASSIGNED"];
 
-const defaultFilters = {
-  status: "ALL",
-  priority: "ALL",
-  assigned: "ALL"
+const FilterSidebar = ({ filters, setFilters, onFilter }) => {
+  const handleChange = (field, value) => {
+    const updated = { ...filters, [field]: value };
+    setFilters(updated);
+    onFilter(updated);
+  };
+
+  return (
+    <Card className="p-3 shadow-sm border">
+      <h5 className="mb-3">Filter</h5>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Status</Form.Label>
+        <Form.Select
+          value={filters.status}
+          onChange={(e) => handleChange("status", e.target.value)}
+        >
+          {statuses.map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Priority</Form.Label>
+        <Form.Select
+          value={filters.priority}
+          onChange={(e) => handleChange("priority", e.target.value)}
+        >
+          {priorities.map((priority) => (
+            <option key={priority} value={priority}>
+              {priority}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Assignment</Form.Label>
+        <Form.Select
+          value={filters.assigned}
+          onChange={(e) => handleChange("assigned", e.target.value)}
+        >
+          {assignedOptions.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+    </Card>
+  );
 };
-
-const FilterSidebar = ({ filters = defaultFilters, setFilters }) => (
-<Card className="p-3 mb-4 shadow-sm border filter-sidebar-card">
-    <h5>Filters</h5>
-
-    <Form.Group className="mb-2">
-      <Form.Label>Status</Form.Label>
-      <Form.Select
-        name="status"
-        value={filters.status}
-        onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-      >
-        {statuses.map((s) => (
-          <option key={s}>{s}</option>
-        ))}
-      </Form.Select>
-    </Form.Group>
-
-    <Form.Group className="mb-2">
-      <Form.Label>Priority</Form.Label>
-      <Form.Select
-        name="priority"
-        value={filters.priority}
-        onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
-      >
-        {priorities.map((p) => (
-          <option key={p}>{p}</option>
-        ))}
-      </Form.Select>
-    </Form.Group>
-
-    <Form.Group className="mb-2">
-      <Form.Label>Assigned</Form.Label>
-      <Form.Select
-        name="assigned"
-        value={filters.assigned}
-        onChange={(e) => setFilters({ ...filters, assigned: e.target.value })}
-      >
-        <option>ALL</option>
-        <option>ASSIGNED</option>
-        <option>UNASSIGNED</option>
-      </Form.Select>
-    </Form.Group>
-  </Card>
-);
 
 export default FilterSidebar;

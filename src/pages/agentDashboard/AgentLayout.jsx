@@ -1,13 +1,17 @@
-import { Link } from "react-router-dom";
-import ThemeToggle from "./ThemeToggle";
 import { useTheme } from "./ThemeContext";
+import ThemeToggle from "./ThemeToggle";
+import { useState, useContext } from "react";
+import { Modal, Button } from "react-bootstrap";
+import { AuthContext } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 const AgentLayout = ({ children }) => {
   const { dark } = useTheme();
+  const { logout, userDetails } = useContext(AuthContext);
+  const [showProfile, setShowProfile] = useState(false);
 
   return (
-    <div className={dark ? "bg-dark text-white" : "bg-light text-dark"} style={{ minHeight: "100vh" }}>
-      <ThemeToggle />
+    <div className={dark ? "dark-theme" : "light-theme"} style={{ minHeight: "100vh" }}>
       <div className="d-flex">
         {/* Sidebar */}
         <div className="p-3 bg-secondary text-white shadow" style={{ width: "220px", minHeight: "100vh" }}>
@@ -17,19 +21,45 @@ const AgentLayout = ({ children }) => {
               <Link to="/agent" className="text-white text-decoration-none">📋 Tickets</Link>
             </li>
             <li>
-              <Link to="/profile" className="text-white text-decoration-none">👤 Profile</Link>
+              <span role="button" onClick={() => setShowProfile(true)} className="text-white text-decoration-none d-block mb-2">
+                👤 Profile
+              </span>
             </li>
             <li>
-              <Link to="/login" className="text-white text-decoration-none">🚪 Logout</Link>
+              <span
+                role="button"
+                onClick={() => {
+                  logout();
+                  window.location.href = "/login";
+                }}
+                className="text-white text-decoration-none d-block"
+              >
+                🚪 Logout
+              </span>
             </li>
           </ul>
+          <div className="mt-4"><ThemeToggle /></div>
         </div>
 
         {/* Main Content */}
-        <div className="flex-grow-1 p-4 position-relative">
+        <div className="flex-grow-1 p-4">
           {children}
         </div>
       </div>
+
+      {/* Profile Modal */}
+      <Modal show={showProfile} onHide={() => setShowProfile(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Agent Profile</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p><strong>Name:</strong> {userDetails?.name || "Loading..."}</p>
+          <p><strong>Email:</strong> {userDetails?.email || "Loading..."}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowProfile(false)}>Close</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

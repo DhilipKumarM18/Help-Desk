@@ -4,10 +4,10 @@ import moment from "moment";
 const TicketDetailModal = ({
   ticket,
   onClose,
-  comments,
-  comment,
-  setComment,
-  submitComment
+  comments = [],
+  comment = "",
+  setComment = () => {},
+  submitComment = () => {}
 }) => (
   <Modal show onHide={onClose} size="lg">
     <Modal.Header closeButton>
@@ -17,21 +17,24 @@ const TicketDetailModal = ({
     </Modal.Header>
     <Modal.Body>
       <p><strong>Description:</strong> {ticket.description}</p>
-      <p><strong>Status:</strong> {ticket.status}</p>
-      <p><strong>Priority:</strong> {ticket.priority}</p>
+      <p><strong>Status:</strong> <span className="text-uppercase">{ticket.status}</span></p>
+      <p><strong>Priority:</strong> <span className="text-uppercase">{ticket.priority}</span></p>
+      <p><strong>Created At:</strong> {moment(ticket.createdAt).format("DD MMM YYYY, h:mm A")}</p>
       <p><strong>Assigned To:</strong> {ticket.assignedTo?.name || "Unassigned"}</p>
 
       <hr />
       <h5>Comments</h5>
       <ul className="list-group mb-3">
-        {comments.map((c) => (
+        {comments.length > 0 ? comments.map((c) => (
           <li key={c.id} className="list-group-item">
             <strong>{c.user.name}</strong>: {c.content}
             <small className="text-muted ms-2">
               ({moment(c.createdAt).fromNow()})
             </small>
           </li>
-        ))}
+        )) : (
+          <li className="list-group-item text-muted">No comments yet.</li>
+        )}
       </ul>
 
       <Form.Control

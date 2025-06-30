@@ -3,15 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Card, Row, Col } from "react-bootstrap";
 import axios from "axios";
 
-const Register = () => {
+const Admin_Register = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: '',
     email: '',
     password: '',
-    role: 'CUSTOMER',
+    role: 'AGENT',
   });
-  // const [pass,setPass] = useState("")
+  const [pass,setPass] = useState("")
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,11 +20,18 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
+      if(form.role == 'AGENT' && pass == 'DhilipDK18')
+      {
         const response = await axios.post("http://localhost:8080/api/auth/register", form);
-        alert("Registration successful. Please login.");
-        navigate("/login");
-       console.log(response)
+      alert("Registration successful. Please login.");
+      navigate("/login");
+      console.log(response)
+      }
+      else
+      {
+        alert("Invalid Passkey")
+      }
+      
       
     } catch (err) {
       console.error(err);
@@ -75,13 +82,14 @@ const Register = () => {
 
                 <Form.Group className="mb-4">
                   <Form.Label>Role</Form.Label>
-                  <Form.Select name="role" onChange={handleChange} required>
-                    <option value="CUSTOMER">Customer</option>
-                    <option value="AGENT">Agent</option>
-                  </Form.Select>
+                  <Form.Control
+                    type="text"
+                    value={form.role}
+                    disabled
+                  />
                 </Form.Group>
                
-               {/* {form.role == 'AGENT' && 
+               {form.role == 'AGENT' && 
                 <Form.Group className="mb-3">
                   <Form.Label>PassKey For Agent</Form.Label>
                   <Form.Control
@@ -91,7 +99,7 @@ const Register = () => {
                     required
                   />
                 </Form.Group>
-               } */}
+               }
                 
 
                 <div className="d-grid gap-2">
@@ -110,4 +118,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Admin_Register;

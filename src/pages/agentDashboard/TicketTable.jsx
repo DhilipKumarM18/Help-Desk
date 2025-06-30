@@ -1,7 +1,7 @@
 import { Table } from "react-bootstrap";
 import TicketRow from "./TicketRow";
 
-const TicketTable = ({ tickets, onAssign, onStatusChange, onView }) => (
+const TicketTable = ({ tickets, onAssign, onStatusChange, onView, onDelete }) => (
   <Table bordered hover responsive>
     <thead className="table-light">
       <tr>
@@ -12,6 +12,7 @@ const TicketTable = ({ tickets, onAssign, onStatusChange, onView }) => (
         <th>Created By</th>
         <th>Assigned To</th>
         <th>Actions</th>
+        <th>Delete</th>
       </tr>
     </thead>
     <tbody>
@@ -22,6 +23,7 @@ const TicketTable = ({ tickets, onAssign, onStatusChange, onView }) => (
           onAssign={onAssign}
           onStatusChange={onStatusChange}
           onView={onView}
+          onDelete={onDelete}
         />
       ))}
     </tbody>

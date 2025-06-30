@@ -8,25 +8,21 @@ const statusColors = {
   CLOSED: "secondary"
 };
 
+const priorityColors = {
+  HIGH: "danger",
+  MEDIUM: "warning",
+  LOW: "success"
+};
+
 const TicketRow = ({ ticket, onView }) => (
   <tr>
     <td>{ticket.id}</td>
     <td>{ticket.title}</td>
     <td>
-      <Badge bg={statusColors[ticket.status]}>{ticket.status}</Badge>
+      <Badge bg={statusColors[ticket.status] || "dark"}>{ticket.status}</Badge>
     </td>
     <td>
-      <Badge
-        bg={
-          ticket.priority === "HIGH"
-            ? "danger"
-            : ticket.priority === "MEDIUM"
-            ? "warning"
-            : "success"
-        }
-      >
-        {ticket.priority}
-      </Badge>
+      <Badge bg={priorityColors[ticket.priority] || "secondary"}>{ticket.priority}</Badge>
     </td>
     <td>{moment(ticket.createdAt).format("DD MMM YYYY")}</td>
     <td>{ticket.assignedTo?.name || "Unassigned"}</td>

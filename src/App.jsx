@@ -8,6 +8,7 @@ import PrivateRoute from "./auth/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./pages/customerDashboard/ThemeContext"; // or centralize under /context if used app-wide
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Admin_Register from "./pages/Admin_Register";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/ad_register" element={<Admin_Register />} />
             <Route path="/profile" element={<AgentProfile />} />
             <Route path="/customer" element={
               <PrivateRoute role="CUSTOMER">
