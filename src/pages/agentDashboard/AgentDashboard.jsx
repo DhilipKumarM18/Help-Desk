@@ -53,7 +53,7 @@ const AgentDashboard = () => {
 
   useEffect(() => {
     fetchTickets();
-  }, []);
+  },[]);
 
   const handleFilter = (filters) => {
     let result = [...tickets];

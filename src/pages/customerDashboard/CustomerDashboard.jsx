@@ -58,7 +58,7 @@ const CustomerDashboard = () => {
 
   useEffect(() => {
     fetchMyTickets();
-  }, []);
+  },[]);
 
   const handleFilter = (filters) => {
     let result = [...tickets];

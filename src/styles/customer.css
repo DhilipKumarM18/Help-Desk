@@ -19,10 +19,9 @@
   font-weight: bold;
 }
 
-/* Light Theme Enhancements */
 .light-theme .btn {
   color: #fff !important;
-  background-color: #198754 !important; /* Bootstrap green */
+  background-color: #198754 ; 
   border: none;
 }
 
@@ -37,7 +36,6 @@
   color: #000 !important;
 }
 
-/* Dark Theme overrides */
 .dark-theme {
   background-color: #121212;
   color: #ffffff;

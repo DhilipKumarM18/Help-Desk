@@ -20,7 +20,7 @@ const Admin_Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if(form.role == 'AGENT' && pass == 'DhilipDK18')
+      if(form.role == 'AGENT' && pass == 'HELPDESK')
       {
         const response = await axios.post("http://localhost:8080/api/auth/register", form);
       alert("Registration successful. Please login.");

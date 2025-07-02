@@ -73,14 +73,14 @@ const Register = () => {
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-4">
+                {/* <Form.Group className="mb-4">
                   <Form.Label>Role</Form.Label>
                   <Form.Select name="role" onChange={handleChange} required>
                     <option value="CUSTOMER">Customer</option>
                     <option value="AGENT">Agent</option>
                   </Form.Select>
                 </Form.Group>
-               
+                */}
                {/* {form.role == 'AGENT' && 
                 <Form.Group className="mb-3">
                   <Form.Label>PassKey For Agent</Form.Label>
