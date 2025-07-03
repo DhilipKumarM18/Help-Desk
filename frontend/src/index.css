@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.theme-dark {
+  background-color: #1e1e1e;
+  color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.theme-light {
+  background-color: #f8f9fa;
+  color: #212529;
+  transition: all 0.3s ease;
+}

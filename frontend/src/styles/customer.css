@@ -1,0 +1,55 @@
+.dark-theme {
+  background-color: #121212;
+  color: white;
+}
+
+.light-theme {
+  background-color: #f8f9fa;
+  color: black;
+}
+
+.sidebar a {
+  display: block;
+  padding: 10px 0;
+  color: inherit;
+}
+
+.sidebar a:hover {
+  color: #0d6efd;
+  font-weight: bold;
+}
+
+.light-theme .btn {
+  color: #fff !important;
+  background-color: #198754 ; 
+  border: none;
+}
+
+.light-theme .card {
+  background-color: #ffffff !important;
+  border: 1px solid #dee2e6 !important;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+
+.light-theme .table td {
+  color: #000 !important;
+}
+
+.dark-theme {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-theme .card,
+.dark-theme .table,
+.dark-theme .modal-content {
+  background-color: #1f1f1f !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn {
+  background-color: #28a745;
+  color: white;
+}
+

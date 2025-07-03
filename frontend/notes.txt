@@ -1,0 +1,6 @@
+Dependencies Installed:
+
+npm install axios react-router-dom
+npm install -D tailwindcss postcss autoprefixer
+npm install -D @tailwindcss/postcss
+npm install react-bootstrap bootstrap
