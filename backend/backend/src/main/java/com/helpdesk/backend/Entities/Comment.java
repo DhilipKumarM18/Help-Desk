@@ -1,14 +1,11 @@
 package com.helpdesk.backend.Entities;
 
-
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
 public class Comment {
-
     @Id //primary key:
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,18 +33,57 @@ public class Comment {
         this.ticket = ticket;
     }
 
-    // Getters and Setters
-    // ... (all getters/setters for each field)
+    // --- GETTERS ---
+    public Long getId() {
+        return id;
+    }
 
-    // toString()
+    public String getContent() {
+        return content;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Ticket getTicket() {
+        return ticket;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    // --- SETTERS ---
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    // toString() - Optional, but good for debugging
     @Override
     public String toString() {
         return "Comment{" +
-               "id=" + id +
-               ", content='" + content + '\'' +
-               ", user=" + (user != null ? user.getId() : null) +
-               ", ticket=" + (ticket != null ? ticket.getId() : null) +
-               ", createdAt=" + createdAt +
-               '}';
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", user=" + (user != null ? user.getId() : "null") + // Prevent NullPointerException
+                ", ticket=" + (ticket != null ? ticket.getId() : "null") + // Prevent NullPointerException
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

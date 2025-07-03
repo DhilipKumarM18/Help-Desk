@@ -1,5 +1,6 @@
 package com.helpdesk.backend.Services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.helpdesk.backend.DTOS.CreateTicketRequest;
+import com.helpdesk.backend.DTOS.CreatedTicketResponse;
 import com.helpdesk.backend.DTOS.MyTicketsResponse;
 import com.helpdesk.backend.DTOS.UpdateTicketRequest;
 import com.helpdesk.backend.Entities.Ticket;
@@ -35,14 +37,12 @@ public class TicketService {
         ticket.setStatus(Status.OPEN);
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setCreatedBy(customer);
-
         return ticketRepository.save(ticket);
     }
 
     // ✅ Fetch all tickets created by a specific customer
     public List<MyTicketsResponse> getTicketsByCustomer(User customer) {
         List<Ticket> tickets = ticketRepository.findByCreatedBy(customer);
-
         return tickets.stream().map(ticket ->
             new MyTicketsResponse(
                 ticket.getId(),
@@ -58,7 +58,6 @@ public class TicketService {
     // ✅ Fetch all tickets (for agents)
     public List<MyTicketsResponse> getAllTickets() {
         List<Ticket> tickets = ticketRepository.findAll();
-
         return tickets.stream().map(ticket ->
             new MyTicketsResponse(
                 ticket.getId(),
@@ -105,5 +104,21 @@ public class TicketService {
     public void deleteTicket(Long id) {
         Ticket exist = getTicketById(id);
         ticketRepository.deleteById(id);
+    }
+
+    // ✅ Filter tickets (agent-specific)
+    public List<CreatedTicketResponse> filterTickets(Status status,
+                                                     Priority priority,
+                                                     Long assignedTo,
+                                                     LocalDate startDate,
+                                                     LocalDate endDate) {
+        LocalDateTime from = (startDate != null) ? startDate.atStartOfDay() : null;
+        LocalDateTime to = (endDate != null) ? endDate.atTime(23, 59, 59) : null;
+
+        List<Ticket> tickets = ticketRepository.filterTickets(status, priority, assignedTo, from, to);
+
+        return tickets.stream()
+                .map(t -> new CreatedTicketResponse(t))
+                .toList();
     }
 }

@@ -1,20 +1,35 @@
 package com.helpdesk.backend.DTOS;
 
 import com.helpdesk.backend.Entities.User;
- 
-public class UserResponse extends User{
 
-	
-	 public UserResponse(User user) {
-		 super.setId(user.getId()); 
-		 super.setName(user.getName());
-		 super.setEmail(user.getEmail());
-		 super.setRole(user.getRole());
-		 super.setCreatedTickets(user.getCreatedTickets());
-		 super.setAssignedTickets(user.getAssignedTickets());
-	 }
-	 
+public class UserResponse {
+    private Long id;
+    private String name;
+    private String email;
+    private String role;
+
+    // Constructor using User entity
+    public UserResponse(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.role = user.getRole().toString(); // assuming Enum
+    }
+
+    // Getters only (no setters for immutability if you prefer)
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getRole() {
+        return role;
+    }
 }
-	    
-	    
-	

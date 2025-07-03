@@ -1,23 +1,27 @@
 package com.helpdesk.backend.Controllers;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import com.helpdesk.backend.DTOS.CreateTicketRequest;
 import com.helpdesk.backend.DTOS.CreatedTicketResponse;
 import com.helpdesk.backend.DTOS.MyTicketsResponse;
 import com.helpdesk.backend.DTOS.UpdateTicketRequest;
 import com.helpdesk.backend.Entities.Ticket;
+import com.helpdesk.backend.Entities.Ticket.Priority;
+import com.helpdesk.backend.Entities.Ticket.Status;
 import com.helpdesk.backend.Entities.User;
 import com.helpdesk.backend.Security.JwtService;
 import com.helpdesk.backend.Services.TicketService;
 import com.helpdesk.backend.Services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/tickets")
@@ -98,5 +102,19 @@ public class TicketController {
     public String deleteTicketById(@PathVariable Long id) {
         ticketService.deleteTicket(id);
         return "Deleted successfully...";
+    }
+
+    // 7️⃣ Filter tickets (AGENT only)
+    @GetMapping("/filter")
+    // @PreAuthorize("hasRole('AGENT')")
+    public ResponseEntity<List<CreatedTicketResponse>> filterTickets(
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) Priority priority,
+            @RequestParam(required = false) Long assignedTo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        List<CreatedTicketResponse> filtered = ticketService.filterTickets(status, priority, assignedTo, startDate, endDate);
+        return ResponseEntity.ok(filtered);
     }
 }
