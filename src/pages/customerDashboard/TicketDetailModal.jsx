@@ -35,7 +35,7 @@ const TicketDetailModal = ({ ticket, onClose, onUpdate }) => {
       const res = await axios.get(`http://localhost:8080/api/tickets/${ticket.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      onUpdate(res.data); // Notify dashboard to update its list
+      onUpdate(res.data); 
     } catch (err) {
       console.error("Failed to fetch latest ticket", err);
     }
@@ -51,7 +51,7 @@ const TicketDetailModal = ({ ticket, onClose, onUpdate }) => {
       );
       setNewComment("");
       setComments([res.data, ...comments]);
-      await refreshTicket(); // Notify parent
+      await refreshTicket(); 
     } catch (err) {
       console.error("Error adding comment:", err);
     }
@@ -63,7 +63,7 @@ const TicketDetailModal = ({ ticket, onClose, onUpdate }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setComments(comments.filter((c) => c.id !== commentId));
-      await refreshTicket(); // Notify parent
+      await refreshTicket(); 
     } catch (err) {
       console.error("Error deleting comment:", err);
     }
@@ -92,7 +92,7 @@ const TicketDetailModal = ({ ticket, onClose, onUpdate }) => {
       setComments(updated);
       setEditingCommentId(null);
       setEditContent("");
-      await refreshTicket(); // Notify parent
+      await refreshTicket(); 
     } catch (err) {
       console.error("Error updating comment:", err);
     }
@@ -128,7 +128,7 @@ const TicketDetailModal = ({ ticket, onClose, onUpdate }) => {
           </Badge>
         </p>
 
-        {/* Comments */}
+       
         <hr />
         <h6>Comments</h6>
         <Form className="mb-3">

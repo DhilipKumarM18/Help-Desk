@@ -13,7 +13,6 @@ const AgentLayout = ({ children }) => {
   return (
     <div className={dark ? "dark-theme" : "light-theme"} style={{ minHeight: "100vh" }}>
       <div className="d-flex">
-        {/* Sidebar */}
         <div className="p-3 bg-secondary text-white shadow" style={{ width: "220px", minHeight: "100vh" }}>
           <h4>Agent Panel</h4>
           <ul className="list-unstyled mt-4">
@@ -41,13 +40,11 @@ const AgentLayout = ({ children }) => {
           <div className="mt-4"><ThemeToggle /></div>
         </div>
 
-        {/* Main Content */}
         <div className="flex-grow-1 p-4">
           {children}
         </div>
       </div>
 
-      {/* Profile Modal */}
       <Modal show={showProfile} onHide={() => setShowProfile(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Agent Profile</Modal.Title>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { Container, Row, Col } from "react-bootstrap";
 import AgentLayout from "./AgentLayout";
 import StatsPanel from "../customerDashboard/StatsPanel";
-import FilterSidebar from ".//FilterSidebar";
+import FilterSidebar from "./FilterSidebar";
 import TicketTable from "./TicketTable";
 import { useTheme } from "./ThemeContext";
 import { AuthContext } from "../../context/AuthContext";
@@ -53,7 +53,7 @@ const AgentDashboard = () => {
 
   useEffect(() => {
     fetchTickets();
-  },[]);
+  }, []);
 
   const handleFilter = (filters) => {
     let result = [...tickets];
@@ -156,30 +156,38 @@ const AgentDashboard = () => {
   };
 
   return (
-    <div className={dark ? "dark-theme" : "light-theme"}>
+    <div className={`${dark ? "dark-theme bg-gray-900 text-white" : "light-theme bg-white text-black"} min-h-screen`}>
       <AgentLayout>
-        <Container fluid>
+        <Container fluid className="px-4 py-3">
           <Row className="align-items-center mb-3">
-            <Col><h3 className="fw-bold">Welcome, {userDetails?.name || "Agent"}!</h3></Col>
+            <Col>
+              <h3 className="fw-bold text-xl sm:text-2xl">Welcome, {userDetails?.name || "Agent"}!</h3>
+            </Col>
           </Row>
 
           <Row>
-            <Col md={9}>
-              <StatsPanel tickets={filtered} />
-              <TicketTable
-                tickets={filtered}
-                onAssign={assignTicket}
-                onStatusChange={updateStatus}
-                onView={fetchTicketDetails}
-                onDelete={deleteTicket}
-              />
+            <Col md={9} className="mb-4 md:mb-0">
+              <div className="bg-white dark:bg-gray-800 rounded shadow p-3 mb-4">
+                <StatsPanel tickets={filtered} />
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded shadow p-3">
+                <TicketTable
+                  tickets={filtered}
+                  onAssign={assignTicket}
+                  onStatusChange={updateStatus}
+                  onView={fetchTicketDetails}
+                  onDelete={deleteTicket}
+                />
+              </div>
             </Col>
             <Col md={3}>
-              <FilterSidebar
-                filters={filters}
-                setFilters={setFilters}
-                onFilter={handleFilter}
-              />
+              <div className="bg-white dark:bg-gray-800 rounded shadow p-3">
+                <FilterSidebar
+                  filters={filters}
+                  setFilters={setFilters}
+                  onFilter={handleFilter}
+                />
+              </div>
             </Col>
           </Row>
 

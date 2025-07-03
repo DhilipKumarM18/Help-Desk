@@ -35,7 +35,6 @@ const CustomerLayout = ({ children }) => {
         </div>
       </div>
 
-      {/* Profile Modal */}
       <Modal show={showProfile} onHide={() => setShowProfile(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Customer Profile</Modal.Title>

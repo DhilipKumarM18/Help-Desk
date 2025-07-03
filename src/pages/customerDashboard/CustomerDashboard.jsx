@@ -58,7 +58,7 @@ const CustomerDashboard = () => {
 
   useEffect(() => {
     fetchMyTickets();
-  },[]);
+  }, []);
 
   const handleFilter = (filters) => {
     let result = [...tickets];
@@ -86,17 +86,19 @@ const CustomerDashboard = () => {
   };
 
   return (
-    <div className={dark ? "dark-theme" : "light-theme"}>
+    <div className={`${dark ? "dark bg-gray-900 text-white" : "bg-white text-gray-900"} min-h-screen`}>
       <CustomerLayout>
-        <Container fluid>
-          <Row className="align-items-center mb-3">
+        <Container fluid className="py-4">
+          <Row className="align-items-center mb-4">
             <Col>
-              <h3 className="fw-bold">
-                Welcome, {userDetails?.name || "Customer"}!
-              </h3>
+              <h3 className="fw-bold text-xl sm:text-2xl">Welcome, {userDetails?.name || "Customer"}!</h3>
             </Col>
             <Col className="text-end">
-              <Button onClick={() => setShowNewForm(true)} variant="success">
+              <Button
+                onClick={() => setShowNewForm(true)}
+                variant="success"
+                className="shadow-sm px-4 py-2 text-sm"
+              >
                 ➕ New Ticket
               </Button>
             </Col>
@@ -104,18 +106,22 @@ const CustomerDashboard = () => {
 
           <Row>
             <Col md={9}>
-              <StatsPanel tickets={filtered} />
-              <TicketList
-                tickets={filtered}
-                onView={(t) => setSelectedTicket(t)}
-              />
+              <div className="mb-4">
+                <StatsPanel tickets={filtered} />
+              </div>
+              <div className="rounded-lg shadow bg-white dark:bg-gray-800 p-3">
+                <TicketList tickets={filtered} onView={(t) => setSelectedTicket(t)} />
+              </div>
             </Col>
+
             <Col md={3}>
-              <FilterSidebar
-                filters={filters}
-                setFilters={setFilters}
-                onFilter={handleFilter}
-              />
+              <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded shadow-sm">
+                <FilterSidebar
+                  filters={filters}
+                  setFilters={setFilters}
+                  onFilter={handleFilter}
+                />
+              </div>
             </Col>
           </Row>
         </Container>
