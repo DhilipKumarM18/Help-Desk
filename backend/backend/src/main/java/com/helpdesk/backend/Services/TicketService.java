@@ -118,7 +118,12 @@ public class TicketService {
         List<Ticket> tickets = ticketRepository.filterTickets(status, priority, assignedTo, from, to);
 
         return tickets.stream()
-                .map(t -> new CreatedTicketResponse(t))
+                .map(CreatedTicketResponse::new)
                 .toList();
+    }
+
+    // ✅ Search tickets by title (case-insensitive)
+    public List<Ticket> searchTicketsByTitle(String keyword) {
+        return ticketRepository.searchByTitle(keyword);
     }
 }
