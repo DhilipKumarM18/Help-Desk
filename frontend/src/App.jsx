@@ -26,7 +26,11 @@ function App() {
                 <CustomerDashboard />
               </PrivateRoute>
             } />
-            <Route path="/agent" element={<AgentDashboard />} />
+            <Route path="/agent" element={
+              <PrivateRoute role="AGENT">
+                <AgentDashboard />
+              </PrivateRoute>
+            } />
           </Routes>
         </Router>
       </AuthProvider>
