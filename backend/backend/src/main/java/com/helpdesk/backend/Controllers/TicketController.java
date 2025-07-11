@@ -2,6 +2,7 @@ package com.helpdesk.backend.Controllers;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,6 +36,7 @@ public class TicketController {
 
     @Autowired
     private TicketService ticketService;
+
 
     // 1️⃣ Create Ticket (CUSTOMER only)
     @PostMapping("/create")
@@ -106,7 +108,7 @@ public class TicketController {
 
     // 7️⃣ Filter tickets (AGENT only)
     @GetMapping("/filter")
-    // @PreAuthorize("hasRole('AGENT')")
+    @PreAuthorize("hasRole('AGENT')")
     public ResponseEntity<List<CreatedTicketResponse>> filterTickets(
             @RequestParam(required = false) Status status,
             @RequestParam(required = false) Priority priority,
@@ -117,4 +119,25 @@ public class TicketController {
         List<CreatedTicketResponse> filtered = ticketService.filterTickets(status, priority, assignedTo, startDate, endDate);
         return ResponseEntity.ok(filtered);
     }
+
+   // 8️⃣ Search tickets by title
+@GetMapping("/search")
+@PreAuthorize("hasRole('AGENT')")
+public ResponseEntity<List<MyTicketsResponse>> searchTicketsByTitle(@RequestParam("title") String title) {
+    List<Ticket> result = ticketService.searchTicketsByTitle(title);
+
+    List<MyTicketsResponse> response = result.stream()
+        .map(ticket -> new MyTicketsResponse(
+            ticket.getId(),
+            ticket.getTitle(),
+            ticket.getDescription(),
+            ticket.getPriority(),
+            ticket.getStatus(),
+            ticket.getCreatedAt()
+        ))
+        .collect(Collectors.toList());
+
+    return ResponseEntity.ok(response);
+}
+
 }
