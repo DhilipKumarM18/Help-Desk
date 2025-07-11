@@ -10,8 +10,6 @@ const statusColors = {
 
 const agentOptions = [
   { id: 20, label: "Agent 1" },
-  { id: 21, label: "Agent 2" },
-  { id: 27, label: "Agent 3" },
 ];
 
 const TicketRow = ({ ticket, onAssign, onStatusChange, onView, onDelete }) => {
