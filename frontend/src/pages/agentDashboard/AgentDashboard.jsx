@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import AgentLayout from "./AgentLayout";
 import StatsPanel from "../customerDashboard/StatsPanel";
 import FilterSidebar from "./FilterSidebar";
@@ -17,6 +17,8 @@ const AgentDashboard = () => {
   const [filtered, setFiltered] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [admins, setAdmins] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [filters, setFilters] = useState({
     status: "ALL",
     priority: "ALL",
@@ -70,6 +72,43 @@ const AgentDashboard = () => {
       result = result.filter(t => t.assignedTo?.id === userDetails?.id);
     } else if (filters.assigned === "UNASSIGNED") {
       result = result.filter(t => !t.assignedTo);
+    }
+
+    // Apply search after filtering
+    if (searchQuery.trim() !== "") {
+      result = result.filter(t =>
+        t.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    setFilters(filters);
+    setFiltered(result);
+  };
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    let result = [...tickets];
+
+    if (filters.status !== "ALL") {
+      result = result.filter(t => t.status === filters.status);
+    }
+
+    if (filters.priority !== "ALL") {
+      result = result.filter(t => t.priority === filters.priority);
+    }
+
+    if (filters.assigned === "ASSIGNED") {
+      result = result.filter(t => t.assignedTo?.id === userDetails?.id);
+    } else if (filters.assigned === "UNASSIGNED") {
+      result = result.filter(t => !t.assignedTo);
+    }
+
+    if (query.trim() !== "") {
+      result = result.filter(t =>
+        t.title.toLowerCase().includes(query.toLowerCase())
+      );
     }
 
     setFiltered(result);
@@ -162,6 +201,18 @@ const AgentDashboard = () => {
           <Row className="align-items-center mb-3">
             <Col>
               <h3 className="fw-bold text-xl sm:text-2xl">Welcome, {userDetails?.name || "Agent"}!</h3>
+            </Col>
+          </Row>
+
+          {/* 🔍 Search Bar */}
+          <Row className="mb-3">
+            <Col md={6}>
+              <Form.Control
+                type="text"
+                placeholder="Search tickets by title..."
+                value={searchQuery}
+                onChange={handleSearch}
+              />
             </Col>
           </Row>
 
