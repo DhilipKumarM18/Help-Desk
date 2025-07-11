@@ -74,7 +74,7 @@ const AgentDashboard = () => {
       result = result.filter(t => !t.assignedTo);
     }
 
-    // Apply search after filtering
+    
     if (searchQuery.trim() !== "") {
       result = result.filter(t =>
         t.title.toLowerCase().includes(searchQuery.toLowerCase())
