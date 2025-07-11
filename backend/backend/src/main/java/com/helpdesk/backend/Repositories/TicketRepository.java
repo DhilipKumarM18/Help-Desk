@@ -31,4 +31,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate
     );
+
+    // 🔍 Search tickets by title (case-insensitive)
+    @Query("SELECT t FROM Ticket t WHERE LOWER(t.title) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Ticket> searchByTitle(@Param("keyword") String keyword);
 }
