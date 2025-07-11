@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import CustomerLayout from "./CustomerLayout";
 import TicketList from "./TicketList";
 import TicketDetailModal from "./TicketDetailModal";
@@ -17,6 +17,7 @@ const CustomerDashboard = () => {
   const [filtered, setFiltered] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [showNewForm, setShowNewForm] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(""); 
 
   const [filters, setFilters] = useState({
     status: "ALL",
@@ -75,7 +76,41 @@ const CustomerDashboard = () => {
       result = result.filter((t) => t.assignedTo === null);
     }
 
+    // Apply search filter after basic filters
+    if (searchQuery.trim() !== "") {
+      result = result.filter((t) =>
+        t.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
     setFilters(filters);
+    setFiltered(result);
+  };
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    let result = [...tickets];
+
+    if (filters.status !== "ALL") {
+      result = result.filter((t) => t.status === filters.status);
+    }
+    if (filters.priority !== "ALL") {
+      result = result.filter((t) => t.priority === filters.priority);
+    }
+    if (filters.assigned === "ASSIGNED") {
+      result = result.filter((t) => t.assignedTo !== null);
+    } else if (filters.assigned === "UNASSIGNED") {
+      result = result.filter((t) => t.assignedTo === null);
+    }
+
+    if (query.trim() !== "") {
+      result = result.filter((t) =>
+        t.title.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+
     setFiltered(result);
   };
 
@@ -101,6 +136,18 @@ const CustomerDashboard = () => {
               >
                 ➕ New Ticket
               </Button>
+            </Col>
+          </Row>
+
+          {/* 🔍 Search Bar */}
+          <Row className="mb-3">
+            <Col md={6}>
+              <Form.Control
+                type="text"
+                placeholder="Search tickets by title..."
+                value={searchQuery}
+                onChange={handleSearch}
+              />
             </Col>
           </Row>
 
