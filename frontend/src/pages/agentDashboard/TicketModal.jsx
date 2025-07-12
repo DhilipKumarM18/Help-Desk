@@ -31,7 +31,7 @@ const TicketModal = ({ ticket, onClose, onUpdate }) => {
         `http://localhost:8080/api/tickets/${ticket.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      onUpdate?.(res.data); // 🔄 notify parent to update UI
+      onUpdate?.(res.data); 
     } catch (err) {
       console.error("Error refreshing ticket", err);
     }
@@ -53,7 +53,7 @@ const TicketModal = ({ ticket, onClose, onUpdate }) => {
       );
       setNewComment("");
       setComments([res.data, ...comments]);
-      refreshTicket(); // 🟡 Refresh after comment add
+      refreshTicket(); 
     } catch (err) {
       console.error("Error adding comment:", err);
     }
@@ -65,7 +65,7 @@ const TicketModal = ({ ticket, onClose, onUpdate }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setComments(comments.filter(c => c.id !== commentId));
-      refreshTicket(); // 🟡 Refresh after delete
+      refreshTicket();
     } catch (err) {
       console.error("Error deleting comment:", err);
     }
@@ -94,7 +94,7 @@ const TicketModal = ({ ticket, onClose, onUpdate }) => {
       setComments(updated);
       setEditingCommentId(null);
       setEditContent("");
-      refreshTicket(); // 🟡 Refresh after edit
+      refreshTicket(); 
     } catch (err) {
       console.error("Error updating comment:", err);
     }
