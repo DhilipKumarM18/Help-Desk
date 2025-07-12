@@ -99,13 +99,14 @@ const TicketRow = ({ ticket, onAssign, onStatusChange, onView, onDelete }) => {
         
       </td>
       <td>
-        <Button
+        <button
           variant="danger"
           size="sm"
           onClick={() => onDelete(ticket.id)}
+          style={{backgroundColor:'red',color:'white',borderRadius:'5px'}}
         >
           Delete
-        </Button>
+        </button>
       </td>
     </tr>
   );
